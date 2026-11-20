@@ -1445,11 +1445,12 @@
   card.addEventListener("click",e=>{ const t=card.querySelector(".txt"); if(!card.classList.contains("has")) return; if(card.classList.contains("flip") && e.target.closest(".txt") && t.scrollHeight>t.clientHeight) return; card.classList.toggle("flip"); V.querySelector(".dvhint").textContent=card.classList.contains("flip")?"Tocca per tornare alla foto":"Tocca la foto per leggere il pensiero"; });
   V.querySelector(".dvx").addEventListener("click",()=>V.hidden=true);
   V.addEventListener("click",e=>{ if(e.target===V) V.hidden=true; });
-  V.querySelector(".dvp").addEventListener("click",()=>{ if(cur>0) show(cur-1); });
-  V.querySelector(".dvn").addEventListener("click",()=>{ if(cur<DEDICHE.length-1) show(cur+1); });
+  const step=dir=>{ let j=cur+dir; while(j>=0&&j<DEDICHE.length&&DEDICHE[j].bad) j+=dir; if(j>=0&&j<DEDICHE.length) show(j); };
+  V.querySelector(".dvp").addEventListener("click",()=>step(-1));
+  V.querySelector(".dvn").addEventListener("click",()=>step(1));
   DEDICHE.forEach((d,i)=>{
     const c=document.createElement("button"); c.className="dthumb"+(d.testo?" has":"");
-    const im=document.createElement("img"); im.src=d.th||d.img; im.alt=""; im.loading="lazy"; im.referrerPolicy="no-referrer"; c.appendChild(im);
+    const im=document.createElement("img"); im.src=d.th||d.img; im.alt=""; im.loading="lazy"; im.referrerPolicy="no-referrer"; im.onerror=()=>{ d.bad=true; c.remove(); }; c.appendChild(im);
     if(d.testo){ const hb=document.createElement("img"); hb.className="heartb"; hb.src=SPR.cr_heart; hb.alt="Pensiero"; c.appendChild(hb); }
     c.style.rotate=((i%3)-1)*1.6+"deg"; c.addEventListener("click",()=>show(i)); L.appendChild(c);
   });
